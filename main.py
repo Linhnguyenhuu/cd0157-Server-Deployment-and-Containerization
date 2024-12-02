@@ -93,7 +93,7 @@ def decode_jwt():
     data = request.headers['Authorization']
     token = str.replace(str(data), 'Bearer ', '')
     try:
-        data = jwt.decode(token, JWT_SECRET, algorithms=['HS256'])
+        data = jwt.decode(token, JWT_SECRET, verify=False, algorithms=['HS256'])
     except: # pylint: disable=bare-except
         abort(401)
 
@@ -105,10 +105,10 @@ def decode_jwt():
 
 
 def _get_jwt(user_data):
-    exp_time = datetime.datetime.utcnow() + datetime.timedelta(weeks=2)
-    payload = {'exp': exp_time,
-               'nbf': datetime.datetime.utcnow(),
-               'email': user_data['email']}
+    exp_time = datetime.datetime.now() + datetime.timedelta(weeks=2)
+    payload = {'exp': exp_time
+            ,'nbf': datetime.datetime.now()
+            ,'email': user_data['email']}
     return jwt.encode(payload, JWT_SECRET, algorithm='HS256')
 
 if __name__ == '__main__':
